@@ -51,6 +51,18 @@ bool ConfigReader::addKey(std::string key, std::regex validator, bool required) 
 }
 
 /*
+* Function for adding a new key to the reader's schema
+* @param key - the key we are adding to the schema
+* @param validator - a string regex for validating the key's assigned value
+* @param required - if true, this key is required to be specified (default is true)
+*
+* @returns true if the add operation was successful
+*/
+bool ConfigReader::addKey(std::string key, std::string validator, bool required) {
+	return addKey(key, std::regex(validator), required);
+}
+
+/*
 * Function for removing a key from the configuraiton schema
 * @param key - the key being removed
 * 
@@ -85,6 +97,17 @@ bool ConfigReader::removeKey(std::string key) {
 bool ConfigReader::updateKey(std::string key, std::regex validator, bool required) {
 
 	return removeKey(key) && addKey(key, validator, required);
+}
+
+/*
+* Function for modifying the schema for a given key
+* @param key - the key whose schema is being modified
+* @param validator - the modified validator expression as a string
+* @param required - if this key is required (default is true)
+* @returns true if the operation succeeded
+*/
+bool ConfigReader::updateKey(std::string key, std::string validator, bool required) {
+	return updateKey(key, std::regex(validator), required);
 }
 
 /*

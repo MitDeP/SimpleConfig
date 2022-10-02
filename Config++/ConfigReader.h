@@ -20,7 +20,9 @@ public:
 
 
 	bool addKey(std::string key, std::regex validator, bool required = true);
+	bool addKey(std::string key, std::string validator, bool required = true);
 	bool updateKey(std::string key, std::regex validator, bool required = true);
+	bool updateKey(std::string key, std::string validator, bool required = true);
 	bool removeKey(std::string key);
 
 
