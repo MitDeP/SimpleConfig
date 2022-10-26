@@ -63,7 +63,7 @@ bool ConfigReader::addKey(std::string key, std::string validator, bool required)
 }
 
 /*
-* Function for removing a key from the configuraiton schema
+* Function for removing a key from the configuration schema
 * @param key - the key being removed
 * 
 * @returns true if the remove operation succeeded
@@ -135,12 +135,9 @@ std::unordered_map<std::string, std::string> ConfigReader::readFile(std::string 
 	// Open file
 	if (infile.is_open()) {
 
-		std::regex comments(R"(#[\s\w\W]+)");				// Regex for comments
-		//std::regex comments(R"(#[\s\w\W]+)");
-		std::regex whitespace(R"([\s]+)");					// Regex for whitespace
-		//std::regex whitespace(R"([\s]+)");
-		std::regex assignments(R"(([\w]+)=([\w\W]+))");	// Regex for assignment groups
-		//std::regex assignments(R"(([\w]+)=([\w\W]+))")
+		std::regex comments(R"(#[\s\w\W]+)");			// Regex for comments
+		std::regex whitespace(R"([\s]+)");			// Regex for whitespace
+		std::regex assignments(R"(([\w]+)=([\w\W]+))");		// Regex for assignment groups
 
 
 		// Load file line into string variable
@@ -184,7 +181,7 @@ std::unordered_map<std::string, std::string> ConfigReader::readFile(std::string 
 						if (std::regex_match(value, config_schema[key])) {
 							
 							if (parsed_config.count(key))
-								std::cerr << "WARNING: value for key '" << key << "' has multiple entries. Updatring from '" << parsed_config[key] << "' to '" << value << "'\n";
+								std::cerr << "WARNING: value for key '" << key << "' has multiple entries. Updating from '" << parsed_config[key] << "' to '" << value << "'\n";
 
 							// Add the value
 							parsed_config[key] = value;
@@ -270,7 +267,7 @@ std::unordered_map<std::string, std::string> ConfigReader::readFile(std::string 
 /*
 * Function for getting a map of keys and values from a config file.
 * @param path - a filesystem object specifying the path
-* @returns an unordered map of all the keys and values parsed from teh config file.
+* @returns an unordered map of all the keys and values parsed from the config file.
 */
 std::unordered_map<std::string, std::string> ConfigReader::readFile(std::filesystem::path path) {
 	return readFile(path.string());
@@ -314,7 +311,7 @@ void ConfigReader::selfCheck(std::unordered_map<std::string, std::string> parsed
 	}
 
 	if (read_errors.size()) {
-		std::clog << "\nWhile reading the config file, the following errors occured:\n";
+		std::clog << "\nWhile reading the config file, the following errors occurred:\n";
 		for (std::string err : read_errors)
 			std::clog << "\t" << err << "\n";
 
