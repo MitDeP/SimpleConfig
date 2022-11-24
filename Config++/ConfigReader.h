@@ -21,8 +21,8 @@ public:
 		bool exit_on_invalid_line = true, bool delay_exit = true);
 	~ConfigReader();
 
-	std::unordered_map<std::string, std::string> readFile(std::filesystem::path path);
-	std::unordered_map<std::string, std::string> readFile(std::string path);
+	void readFile(std::filesystem::path path);
+	void readFile(std::string path);
 
 
 	bool addKey(std::string key, std::regex validator, bool required = true, std::string* default_entry = nullptr);
@@ -30,6 +30,13 @@ public:
 	bool updateKey(std::string key, std::regex validator, bool required = true, std::string* default_entry = nullptr);
 	bool updateKey(std::string key, std::string validator, bool required = true, std::string* default_entry = nullptr);
 	bool removeKey(std::string key);
+
+	std::string getValue(std::string key);
+	int getValueAsInt(std::string key);
+	float getValueAsFloat(std::string key);
+	bool getValueAsSimpleBool(std::string key);
+	bool hasKey(std::string key);
+
 
 
 private:
@@ -54,7 +61,7 @@ private:
 	std::unordered_map<std::string, std::regex> config_schema;
 	std::unordered_map<std::string, bool> entry_required;
 	std::unordered_map<std::string, std::string*> default_entries;
-
+	std::unordered_map<std::string, std::string> read_entries;
 	std::unordered_map<std::string, std::string> invalid_entries;
 	std::vector<std::string> missing_entries;
 	std::vector<std::string> read_errors;

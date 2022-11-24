@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <regex>
+#include <sstream>
 
 
 std::regex ConfigReader::simple_num = std::regex("[\\d]+");
@@ -127,7 +128,7 @@ bool ConfigReader::updateKey(std::string key, std::string validator, bool requir
 * @param path - a string file path to the config file.
 * @returns an unordered map of all the keys and values parsed from teh config file.
 */
-std::unordered_map<std::string, std::string> ConfigReader::readFile(std::string path) {
+void ConfigReader::readFile(std::string path) {
 	
 
 	if (config_schema.size() == 0)
@@ -272,7 +273,7 @@ std::unordered_map<std::string, std::string> ConfigReader::readFile(std::string 
 
 	selfCheck(parsed_config);
 
-	return parsed_config;
+	read_entries = parsed_config;
 
 }
 
@@ -281,8 +282,47 @@ std::unordered_map<std::string, std::string> ConfigReader::readFile(std::string 
 * @param path - a filesystem object specifying the path
 * @returns an unordered map of all the keys and values parsed from the config file.
 */
-std::unordered_map<std::string, std::string> ConfigReader::readFile(std::filesystem::path path) {
-	return readFile(path.string());
+void ConfigReader::readFile(std::filesystem::path path) {
+	readFile(path.string());
+}
+
+std::string ConfigReader::getValue(std::string key) {
+	return read_entries[key];
+}
+
+int ConfigReader::getValueAsInt(std::string key) {
+	std::stringstream ss;
+	int as_int;
+	std::string value = getValue(key);
+	ss << value;
+	ss >> as_int;
+	return as_int;
+}
+
+float ConfigReader::getValueAsFloat(std::string key) {
+	std::stringstream ss;
+	float as_float;
+	std::string value = getValue(key);
+	ss << value;
+	ss >> as_float;
+	return as_float;
+}
+
+bool ConfigReader::getValueAsSimpleBool(std::string key) {
+	std::string value = getValue(key);
+	std::transform(value.begin(), value.end(), value.begin(), ::toupper);
+
+	return (value == "1"
+		|| value == "TRUE"
+		|| value == "ENABLE"
+		|| value == "ENABLED"
+		|| value == "YES"
+		|| value == "ON");
+}
+
+
+bool ConfigReader::hasKey(std::string key) {
+	return read_entries.count(key) >= 1;
 }
 
 /*
