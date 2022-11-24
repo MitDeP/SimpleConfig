@@ -19,10 +19,10 @@ public:
 	std::unordered_map<std::string, std::string> readFile(std::string path);
 
 
-	bool addKey(std::string key, std::regex validator, bool required = true);
-	bool addKey(std::string key, std::string validator, bool required = true);
-	bool updateKey(std::string key, std::regex validator, bool required = true);
-	bool updateKey(std::string key, std::string validator, bool required = true);
+	bool addKey(std::string key, std::regex validator, bool required = true, std::string* default_entry = nullptr);
+	bool addKey(std::string key, std::string validator, bool required = true, std::string* default_entry = nullptr);
+	bool updateKey(std::string key, std::regex validator, bool required = true, std::string* default_entry = nullptr);
+	bool updateKey(std::string key, std::string validator, bool required = true, std::string* default_entry = nullptr);
 	bool removeKey(std::string key);
 
 
@@ -47,6 +47,7 @@ private:
 
 	std::unordered_map<std::string, std::regex> config_schema;
 	std::unordered_map<std::string, bool> entry_required;
+	std::unordered_map<std::string, std::string*> default_entries;
 
 	std::unordered_map<std::string, std::string> invalid_entries;
 	std::vector<std::string> missing_entries;
@@ -54,6 +55,7 @@ private:
 
 
 	void selfCheck(std::unordered_map<std::string, std::string> parsed_config);
+	void setDefaultEntry(std::string key, std::string* default_entry);
 
 };
 

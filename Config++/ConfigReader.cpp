@@ -27,9 +27,12 @@ ConfigReader::~ConfigReader() {}
 * 
 * @returns true if the add operation was successful
 */
-bool ConfigReader::addKey(std::string key, std::regex validator, bool required) {
+bool ConfigReader::addKey(std::string key, std::regex validator, bool required, std::string* default_entry) {
 
 	bool added_okay = true;
+
+	if (default_entry)
+		setDefaultEntry(key, default_entry);
 
 	if (keys_case_insensitive)
 		std::transform(key.begin(), key.end(), key.begin(), ::toupper); 
@@ -45,6 +48,8 @@ bool ConfigReader::addKey(std::string key, std::regex validator, bool required) 
 		config_schema[key] = validator;
 	}
 	
+	if (required && default_entry != nullptr)
+		std::cerr << "NOTICE: '" << key << "' is set as required, but has a valid default provided. The required parameter will thus be ignored.\n";
 
 	return added_okay;
 
@@ -58,8 +63,8 @@ bool ConfigReader::addKey(std::string key, std::regex validator, bool required) 
 *
 * @returns true if the add operation was successful
 */
-bool ConfigReader::addKey(std::string key, std::string validator, bool required) {
-	return addKey(key, std::regex(validator), required);
+bool ConfigReader::addKey(std::string key, std::string validator, bool required, std::string* default_entry) {
+	return addKey(key, std::regex(validator), required, default_entry);
 }
 
 /*
@@ -94,9 +99,9 @@ bool ConfigReader::removeKey(std::string key) {
 * @param required - if this key is required (default is true)
 * @returns true if the operation succeeded
 */
-bool ConfigReader::updateKey(std::string key, std::regex validator, bool required) {
+bool ConfigReader::updateKey(std::string key, std::regex validator, bool required, std::string* default_entry) {
 
-	return removeKey(key) && addKey(key, validator, required);
+	return removeKey(key) && addKey(key, validator, required, default_entry);
 }
 
 /*
@@ -106,8 +111,8 @@ bool ConfigReader::updateKey(std::string key, std::regex validator, bool require
 * @param required - if this key is required (default is true)
 * @returns true if the operation succeeded
 */
-bool ConfigReader::updateKey(std::string key, std::string validator, bool required) {
-	return updateKey(key, std::regex(validator), required);
+bool ConfigReader::updateKey(std::string key, std::string validator, bool required, std::string* default_entry) {
+	return updateKey(key, std::regex(validator), required, default_entry);
 }
 
 /*
@@ -287,7 +292,7 @@ void ConfigReader::selfCheck(std::unordered_map<std::string, std::string> parsed
 	for (std::unordered_map<std::string, bool>::iterator iter = entry_required.begin(); iter != entry_required.end(); iter++) {
 		errString = "";
 		// Missing required entry
-		if (parsed_config.count(iter->first) == 0 && iter->second) {
+		if (parsed_config.count(iter->first) == 0 && iter->second && default_entries[iter->first] == nullptr) {
 			errString = "Missing value for '" + iter->first + "' is required";
 			if (exit_on_missing_entry && !delay_exit) {
 				std::cerr << "ERROR: " << errString << "\n";
@@ -299,6 +304,10 @@ void ConfigReader::selfCheck(std::unordered_map<std::string, std::string> parsed
 			}
 			else
 				std::cerr << "WARNING: " << errString << "\n";
+		}
+
+		else if (parsed_config.count(iter->first) == 0 && default_entries[iter->first] != nullptr) {
+			parsed_config[iter->first] = *default_entries[iter->first];
 		}
 	}
 
@@ -322,5 +331,30 @@ void ConfigReader::selfCheck(std::unordered_map<std::string, std::string> parsed
 		std::clog << "\nDue to errors reading the config file, the program will now terminate\n";
 		exit(EXIT_FAILURE);
 	}
+
+}
+
+void ConfigReader::setDefaultEntry(std::string key, std::string* default_entry) {
+	bool fail = false;
+	std::string reason = "Unknown reason for failure!";
+
+	if (config_schema.count(key) == 0) {
+		fail = true;
+		reason = "Unknown key '" + key + "' is not never specified in the config schema. Ensure it has been added.";
+	}
+	else if (!std::regex_match(*default_entry, config_schema[key])) {
+		// default does not match pattern
+
+		reason = "Provided default for key '" + key + "', '" + *default_entry + "' did not match the validation provided.";
+		fail = true;
+	}
+
+
+	if (fail) {
+		std::cerr << reason << "\n";
+		exit(EXIT_FAILURE);
+	}
+	
+	default_entries[key] = default_entry;
 
 }
