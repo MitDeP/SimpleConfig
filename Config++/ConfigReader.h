@@ -26,9 +26,9 @@ public:
 
 
 	bool addKey(std::string key, std::regex validator, bool required = true, std::string* default_entry = nullptr);
-	bool addKey(std::string key, std::string validator, bool required = true, std::string* default_entry = nullptr);
-	bool updateKey(std::string key, std::regex validator, bool required = true, std::string* default_entry = nullptr);
-	bool updateKey(std::string key, std::string validator, bool required = true, std::string* default_entry = nullptr);
+	bool addKey(std::string key, std::string validator = simple_str_string, bool required = true, std::string* default_entry = nullptr);
+	bool updateKey(std::string key, std::regex validator = simple_str, bool required = true, std::string* default_entry = nullptr);
+	bool updateKey(std::string key, std::string validator = simple_str_string, bool required = true, std::string* default_entry = nullptr);
 	bool removeKey(std::string key);
 
 	std::string getValue(std::string key);
@@ -40,6 +40,9 @@ public:
 
 
 private:
+
+	static std::string simple_str_string;
+
 	// If true, keys will be case-insensitive. Otherwise case will matter
 	bool keys_case_insensitive;
 	// If a key is read that is unknown or if a key is inserted twice, fail

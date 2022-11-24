@@ -6,8 +6,9 @@
 #include <sstream>
 
 
+std::string simple_str_string = "[a-zA-Z0-9]+";
 std::regex ConfigReader::simple_num = std::regex("[\\d]+");
-std::regex ConfigReader::simple_str = std::regex("[a-zA-Z0-9]+");
+std::regex ConfigReader::simple_str = std::regex(simple_str_string);
 std::regex ConfigReader::simple_float = std::regex("[0-9]+\\.[0-9]*");
 std::regex ConfigReader::simple_file_path = std::regex();
 
