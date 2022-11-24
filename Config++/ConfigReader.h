@@ -11,6 +11,12 @@ Class for managing the reading of a simple configuration file
 class ConfigReader
 {
 public:
+
+	static std::regex simple_num;
+	static std::regex simple_str;
+	static std::regex simple_float;
+	static std::regex simple_file_path;
+
 	ConfigReader(bool keys_case_insensitive = true, bool exit_on_invalid_key = false, bool exit_on_invalid_entry = true, bool exit_file_not_found = false, bool exit_on_missing_entry = true, 
 		bool exit_on_invalid_line = true, bool delay_exit = true);
 	~ConfigReader();

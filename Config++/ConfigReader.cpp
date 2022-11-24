@@ -4,6 +4,13 @@
 #include <iostream>
 #include <regex>
 
+
+std::regex ConfigReader::simple_num = std::regex("[\\d]+");
+std::regex ConfigReader::simple_str = std::regex("[a-zA-Z0-9]+");
+std::regex ConfigReader::simple_float = std::regex("[0-9]+\\.[0-9]*");
+std::regex ConfigReader::simple_file_path = std::regex();
+
+
 ConfigReader::ConfigReader(bool keys_case_insensitive, bool exit_on_invalid_key, bool exit_on_invalid_entry, bool exit_file_not_found, bool exit_on_missing_entry, 
 	bool exit_on_invalid_line, bool delay_exit){
 
